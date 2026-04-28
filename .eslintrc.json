@@ -1,0 +1,24 @@
+module.exports = {
+  extends: ['@angular/eslint/recommended'],
+  overrides: [
+    {
+      files: ['*.ts'],
+      parserOptions: {
+        project: 'tsconfig.json',
+        createDefaultProgram: true
+      },
+      extends: [
+        'plugin:@angular/recommended',
+        'plugin:@angular/template/recommended'
+      ],
+      rules: {}
+    },
+    {
+      files: ['*.html'],
+      extends: [
+        'plugin:@angular/template/recommended'
+      ],
+      rules: {}
+    }
+  ]
+};

@@ -1,0 +1,22 @@
+<div class="col-md-6 offset-md-3 mt-5">
+  <div class="alert alert-info">
+    <strong>Angular 21 Boilerplate</strong>
+    <p>Email: test@example.com | Password: test</p>
+  </div>
+
+  <div class="card">
+    <div class="card-body">
+      <h4 class="card-title">Verify Email</h4>
+
+      <form [formGroup]="form" (ngSubmit)="onSubmit()">
+        <div class="mb-3">
+          <p>Verification email sent, check your email for the verification link</p>
+        </div>
+        <button [disabled]="form.invalid" class="btn btn-primary">
+          <span *ngIf="loading" class="spinner-border spinner-border-sm me-2"></span>
+          Verify Email
+        </button>
+      </form>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,14 @@
+<nav class="navbar navbar-expand navbar-dark bg-dark px-3">
+  <div class="navbar-nav">
+    <a class="nav-item nav-link" routerLink="/">Home</a>
+    <button *ngIf="accountValue" class="btn btn-link nav-item nav-link" (click)="logout()">Logout</button>
+    <a *ngIf="!accountValue" class="nav-item nav-link" routerLink="/account/login">Login</a>
+  </div>
+</nav>
+
+<div class="p-3">
+  <div class="container-fluid">
+    <app-alert></app-alert>
+    <router-outlet></router-outlet>
+  </div>
+</div>

@@ -1,0 +1,31 @@
+<div class="p-4">
+  <h1>Manage Accounts</h1>
+
+  <button routerLink="/admin/accounts/add" class="btn btn-sm btn-success mb-2">Add Account</button>
+
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>First Name</th>
+        <th>Last Name</th>
+        <th>Email</th>
+        <th>Role</th>
+        <th>Status</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let account of accounts">
+        <td>{{ account.firstName }}</td>
+        <td>{{ account.lastName }}</td>
+        <td>{{ account.email }}</td>
+        <td>{{ account.role }}</td>
+        <td><span class="badge" [ngClass]="account.isVerified ? 'bg-success' : 'bg-danger'">{{ account.isVerified ? 'Verified' : 'Not Verified' }}</span></td>
+        <td>
+          <a [routerLink]="['/admin/accounts/edit', account.id]" class="btn btn-sm btn-primary me-1">Edit</a>
+          <button (click)="deleteAccount(account.id)" class="btn btn-sm btn-danger" [disabled]="account.id === accountService.accountValue?.id">Delete</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
