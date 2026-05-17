@@ -1,10 +1,14 @@
 import { Component } from '@angular/core';
+import { AccountService } from '@app/_services';
 
 @Component({
-  selector: 'app-home',
   templateUrl: './home.component.html',
-  styleUrls: ['./home.component.less'],
-  standalone: true
+  standalone: false
 })
 export class HomeComponent {
+  constructor(private accountService: AccountService) { }
+
+  get account() {
+    return this.accountService.accountValue;
+  }
 }

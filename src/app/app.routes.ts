@@ -5,7 +5,7 @@ import { Role } from './_models';
 export const routes: Routes = [
   {
     path: '',
-    loadComponent: () => import('./home/home.component').then(m => m.HomeComponent)
+    loadChildren: () => import('./home/home.module').then(m => m.HomeModule)
   },
   {
     path: 'account',

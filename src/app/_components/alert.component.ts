@@ -32,7 +32,7 @@ export class AlertComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     // Subscribe to new alert notifications
-    this.alertSubscription = this.alertService.alert$
+    this.alertSubscription = this.alertService.onAlert(this.id)
       .subscribe(alert => {
         // Clear alerts when an empty alert is received
         if (!alert.message) {
@@ -87,15 +87,15 @@ export class AlertComponent implements OnInit, OnDestroy {
 
     const classes = ['alert', 'alert-dismissible', 'mt-4', 'container'];
 
-    const alertTypeClass = {
+    const alertTypeClass: Record<AlertType, string> = {
       [AlertType.Success]: 'alert-success',
       [AlertType.Error]: 'alert-danger',
       [AlertType.Info]: 'alert-info',
       [AlertType.Warning]: 'alert-warning'
     };
 
-    if (alert.type !== undefined) {
-      classes.push(alertTypeClass[alert.type]);
+    if (alert.type && Object.values(AlertType).includes(alert.type as AlertType)) {
+      classes.push(alertTypeClass[alert.type as AlertType]);
     }
 
     if (alert.fade) {

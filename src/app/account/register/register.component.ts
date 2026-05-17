@@ -1,20 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, AbstractControl, ValidationErrors } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { first } from 'rxjs/operators';
+import { MustMatch } from '@app/_helpers';
 import { AccountService, AlertService } from '@app/_services';
-
-function passwordMatchValidator(control: AbstractControl): ValidationErrors | null {
-  const password = control.get('password');
-  const passwordConfirm = control.get('passwordConfirm');
-
-  if (!password || !passwordConfirm) {
-    return null;
-  }
-
-  return password.value === passwordConfirm.value ? null : { mustMatch: true };
-}
 
 @Component({
   selector: 'app-register',
@@ -48,7 +38,7 @@ export class RegisterComponent implements OnInit {
       password: ['', [Validators.required, Validators.minLength(6)]],
       passwordConfirm: ['', Validators.required],
       acceptTerms: [false, Validators.requiredTrue]
-    }, { validators: passwordMatchValidator });
+    }, { validators: MustMatch('password', 'passwordConfirm') });
   }
 
   get f() {
