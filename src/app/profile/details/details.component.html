@@ -1,23 +1,9 @@
-<div class="col-md-6 offset-md-3 mt-5">
-  <div class="card">
-    <div class="card-body">
-      <h4 class="card-title">My Profile</h4>
-
-      <div *ngIf="account">
-        <div class="mb-3">
-          <label>Title:</label>
-          <div>{{ account.title }}</div>
-        </div>
-        <div class="mb-3">
-          <label>First Name:</label>
-          <div>{{ account.firstName }}</div>
-        </div>
-        <div class="mb-3">
-          <label>Last Name:</label>
-          <div>{{ account.lastName }}</div>
-        </div>
-        <div class="mb-3">
-          <label>Email:</label>
+<h1>My Profile</h1>
+<p *ngIf="account">
+    <strong>Name: </strong> {{account.title}} {{account.firstName}} {{account.lastName}}<br />
+    <strong>Email: </strong> {{account.email}}
+</p>
+<p><a routerLink="update">Update Profile</a></p>
           <div>{{ account.email }}</div>
         </div>
         <a routerLink="/profile/update" class="btn btn-primary">Update Profile</a>

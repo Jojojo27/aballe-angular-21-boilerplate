@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { AlertComponent } from './_components';
 import { AccountService } from './_services';
-import { Account } from './_models';
+import { Account, Role } from './_models';
 
 @Component({
   selector: 'app-root',
@@ -13,11 +13,11 @@ import { Account } from './_models';
   imports: [CommonModule, RouterModule, AlertComponent]
 })
 export class AppComponent {
-  title = 'Angular 21 Boilerplate';
-  accountValue?: Account | null;
+  Role = Role;
+  account?: Account | null;
 
   constructor(private accountService: AccountService) {
-    this.accountService.account$.subscribe(x => this.accountValue = x);
+    this.accountService.account$.subscribe(x => this.account = x);
   }
 
   logout() {

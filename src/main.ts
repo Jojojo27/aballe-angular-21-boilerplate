@@ -1,6 +1,13 @@
-import { bootstrapApplication } from '@angular/platform-browser';
-import { AppComponent } from './app/app.component';
-import { appConfig } from './app/app.config';
+import 'zone.js';
+import { enableProdMode } from '@angular/core';
+import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 
-bootstrapApplication(AppComponent, appConfig)
-  .catch(err => console.error(err));
+import { AppModule } from './app/app.module';
+import { environment } from './environments/environment';
+
+if (environment.production) {
+    enableProdMode();
+}
+
+platformBrowserDynamic().bootstrapModule(AppModule, { ngZone: 'zone.js' })
+    .catch(err => console.error(err));
