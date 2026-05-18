@@ -1,17 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { Router, ActivatedRoute, RouterModule } from '@angular/router';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
+import { Router, ActivatedRoute } from '@angular/router';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { first } from 'rxjs/operators';
 import { AccountService, AlertService } from '@app/_services';
 
-@Component({
-  selector: 'app-login',
-  templateUrl: './login.component.html',
-  styleUrls: ['./login.component.less'],
-  standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterModule]
-})
+@Component({ templateUrl: 'login.component.html', standalone: false })
 export class LoginComponent implements OnInit {
   form!: FormGroup;
   loading = false;

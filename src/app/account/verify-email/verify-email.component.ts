@@ -1,17 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { Router, ActivatedRoute, RouterModule } from '@angular/router';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
+import { Router, ActivatedRoute } from '@angular/router';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { first } from 'rxjs/operators';
 import { AccountService, AlertService } from '@app/_services';
 
-@Component({
-  selector: 'app-verify-email',
-  templateUrl: './verify-email.component.html',
-  styleUrls: ['./verify-email.component.less'],
-  standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterModule]
-})
+@Component({ templateUrl: 'verify-email.component.html', standalone: false })
 export class VerifyEmailComponent implements OnInit {
   form!: FormGroup;
   loading = false;
