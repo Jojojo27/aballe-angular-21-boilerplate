@@ -24,7 +24,7 @@
       "ES2022",
       "dom"
     ],
-    "ignoreDeprecations": "6.0",
+    "ignoreDeprecations": "5.0",
     "paths": {
       "@app/*": ["src/app/*"],
       "@environments/*": ["src/environments/*"]

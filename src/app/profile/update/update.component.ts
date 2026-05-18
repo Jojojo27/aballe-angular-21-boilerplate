@@ -1,21 +1,16 @@
 import { Component, OnInit } from '@angular/core';
-import { Router, RouterModule } from '@angular/router';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { first } from 'rxjs/operators';
+import { MustMatch } from '@app/_helpers';
 import { AccountService, AlertService } from '@app/_services';
 
-@Component({
-  selector: 'app-update',
-  templateUrl: './update.component.html',
-  styleUrls: ['./update.component.less'],
-  standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterModule]
-})
+@Component({ templateUrl: 'update.component.html', standalone: false })
 export class UpdateComponent implements OnInit {
   form!: FormGroup;
-  loading = false;
+  submitting = false;
   submitted = false;
+  deleting = false;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -30,8 +25,10 @@ export class UpdateComponent implements OnInit {
       title: [account?.title, Validators.required],
       firstName: [account?.firstName, Validators.required],
       lastName: [account?.lastName, Validators.required],
-      email: [account?.email, [Validators.required, Validators.email]]
-    });
+      email: [account?.email, [Validators.required, Validators.email]],
+      password: ['', [Validators.minLength(6)]],
+      confirmPassword: ['']
+    }, { validator: MustMatch('password', 'confirmPassword') });
   }
 
   get f() {
@@ -40,12 +37,8 @@ export class UpdateComponent implements OnInit {
 
   onSubmit() {
     this.submitted = true;
-
-    if (this.form.invalid) {
-      return;
-    }
-
-    this.loading = true;
+    if (this.form.invalid) return;
+    this.submitting = true;
     this.accountService.update(this.accountService.accountValue?.id || '', this.form.value)
       .pipe(first())
       .subscribe({
@@ -55,7 +48,23 @@ export class UpdateComponent implements OnInit {
         },
         error: (error: any) => {
           this.alertService.error(error);
-          this.loading = false;
+          this.submitting = false;
+        }
+      });
+  }
+
+  onDelete() {
+    if (!confirm('Are you sure you want to delete your account?')) return;
+    this.deleting = true;
+    this.accountService.delete(this.accountService.accountValue?.id || '')
+      .pipe(first())
+      .subscribe({
+        next: () => {
+          this.alertService.success('Account deleted successfully');
+        },
+        error: (error: any) => {
+          this.alertService.error(error);
+          this.deleting = false;
         }
       });
   }
