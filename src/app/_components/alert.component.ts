@@ -1,5 +1,4 @@
 import { ChangeDetectorRef, Component, OnInit, OnDestroy, Input } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { Router, NavigationStart } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { Alert, AlertType } from '@app/_models';
@@ -8,9 +7,7 @@ import { AlertService } from '@app/_services';
 @Component({
   selector: 'app-alert',
   templateUrl: './alert.component.html',
-  styleUrls: ['./alert.component.less'],
-  standalone: true,
-  imports: [CommonModule]
+  standalone: false
 })
 export class AlertComponent implements OnInit, OnDestroy {
   @Input() id = 'default-alert';
