@@ -31,15 +31,18 @@ export class FakeBackendInterceptor implements HttpInterceptor {
             if (accounts.find((x: any) => x.email === body.email)) {
               return error('Email "' + body.email + '" is already registered');
             }
+            const verificationToken = Math.random().toString(36).substr(2, 9);
             const account = { 
               ...body, 
               id: Math.random().toString(36).substr(2, 9), 
               role: accounts.length === 0 ? Role.Admin : Role.User,
-              isVerified: true
+              isVerified: false,
+              verificationToken
             };
+            verifyEmailTokens[verificationToken] = account.id;
             accounts.push(account);
             localStorage.setItem('accounts', JSON.stringify(accounts));
-            return ok();
+            return ok({ verificationToken });
           }
 
           if (url.endsWith('/api/accounts/verify-email') && method === 'POST') {

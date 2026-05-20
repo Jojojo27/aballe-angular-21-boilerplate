@@ -28,6 +28,7 @@ export class VerifyEmailComponent implements OnInit {
     this.token = this.route.snapshot.queryParams['token'];
 
     if (this.token) {
+      this.loading = true;
       this.accountService.verifyEmail(this.token)
         .pipe(first())
         .subscribe({
@@ -37,6 +38,7 @@ export class VerifyEmailComponent implements OnInit {
           },
           error: (error: any) => {
             this.alertService.error(error);
+            this.loading = false;
           }
         });
     }

@@ -49,9 +49,9 @@ export class RegisterComponent implements OnInit {
     this.accountService.register(this.form.value)
       .pipe(first())
       .subscribe({
-        next: () => {
+        next: (response: any) => {
           this.alertService.success('Registration successful, please check your email for verification instructions', { keepAfterRouteChange: true });
-          this.router.navigate(['/account/login']);
+          this.router.navigate(['/account/verify-email'], { queryParams: { token: response?.verificationToken } });
         },
         error: (error: any) => {
           this.alertService.error(error);
