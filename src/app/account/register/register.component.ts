@@ -50,19 +50,10 @@ export class RegisterComponent implements OnInit {
       .pipe(first())
       .subscribe({
         next: (response: any) => {
-          if (response?.verificationCode) {
-            // SMTP not configured — show code so user can verify manually
-            this.alertService.success(
-              `Registration successful! No email configured — your code is: <strong>${response.verificationCode}</strong>. ` +
-              `<a href="/account/verify-email?email=${encodeURIComponent(this.form.value.email)}&token=${response.verificationCode}" style="color:inherit;font-weight:bold">Click here to verify</a>`,
+          this.alertService.success(
+            'Registration successful! Please check your email inbox and click the verification link to activate your account.',
             { keepAfterRouteChange: true, id: 'account-alert' }
           );
-          } else {
-            this.alertService.success(
-              'Registration successful! Please check your email and click the verification link (or use the 6-digit code) to activate your account.',
-              { keepAfterRouteChange: true, id: 'account-alert' }
-            );
-          }
           this.router.navigate(['/account/login']);
         },
         error: (error: any) => {

@@ -88,13 +88,11 @@ if ($method === 'POST' && strpos($uri, '/register') !== false) {
         </body></html>"
     );
     if ($emailSent === true) {
-        sendResponse(['message' => 'Registration successful. Check your email for the verification code.']);
+        sendResponse(['message' => 'Registration successful. Check your email for the verification link.']);
     } else {
-        sendResponse([
-            'message' => 'Registration successful. (Email not configured — use the code below to verify.)',
-            'verificationCode' => $code,
-            'emailError' => $emailSent
-        ]);
+        // Email failed — log internally but do not expose code or error to client
+        error_log('sendEmail failed: ' . print_r($emailSent, true));
+        sendResponse(['message' => 'Registration successful. Verification email could not be sent — please contact support.']);
     }
 }
 
