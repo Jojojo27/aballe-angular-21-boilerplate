@@ -19,12 +19,21 @@ function sendEmail($to, $subject, $htmlBody) {
     $pass = str_replace(' ', '', SMTP_PASS);
     if (!$user || !$pass) return 'no-credentials';
 
-    // Use SSL/SMTPS on port 465 (more reliable than STARTTLS on cloud servers)
-    $socket = @stream_socket_client("ssl://$host:465", $errno, $errstr, 20, STREAM_CLIENT_CONNECT, stream_context_create(['ssl' => ['verify_peer' => true, 'verify_peer_name' => true]]));
+    // STARTTLS on port 587 (Brevo smtp-relay.brevo.com)
+    $socket = @fsockopen($host, 587, $errno, $errstr, 20);
     if (!$socket) return "socket-failed:$errstr($errno)";
 
     stream_set_timeout($socket, 20);
     fgets($socket, 512); // banner
+
+    fwrite($socket, "EHLO localhost\r\n");
+    do { $line = fgets($socket, 512); } while ($line && isset($line[3]) && $line[3] !== ' ');
+
+    fwrite($socket, "STARTTLS\r\n");
+    $tlsResp = fgets($socket, 512);
+    if (strpos($tlsResp, '220') === false) { fclose($socket); return "starttls-failed:$tlsResp"; }
+
+    stream_socket_enable_crypto($socket, true, STREAM_CRYPTO_METHOD_TLS_CLIENT);
 
     fwrite($socket, "EHLO localhost\r\n");
     do { $line = fgets($socket, 512); } while ($line && isset($line[3]) && $line[3] !== ' ');
