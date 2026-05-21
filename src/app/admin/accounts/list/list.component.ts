@@ -14,6 +14,7 @@ import { Account } from '@app/_models';
 })
 export class ListComponent implements OnInit {
   accounts?: Account[];
+  loading = true;
 
   constructor(
     public accountService: AccountService,
@@ -26,9 +27,11 @@ export class ListComponent implements OnInit {
       .subscribe({
         next: (accounts: any) => {
           this.accounts = accounts;
+          this.loading = false;
         },
         error: (error: any) => {
           this.alertService.error(error);
+          this.loading = false;
         }
       });
   }

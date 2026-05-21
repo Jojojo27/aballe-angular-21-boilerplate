@@ -3,7 +3,12 @@
 
   <button routerLink="/admin/accounts/add" class="btn btn-sm btn-success mb-2">Add Account</button>
 
-  <table class="table table-striped">
+  <div *ngIf="loading" class="text-center py-4">
+    <div class="spinner-border" role="status"></div>
+    <p class="mt-2 text-muted">Loading accounts... (server may be starting up)</p>
+  </div>
+
+  <table class="table table-striped" *ngIf="!loading">
     <thead>
       <tr>
         <th>First Name</th>
