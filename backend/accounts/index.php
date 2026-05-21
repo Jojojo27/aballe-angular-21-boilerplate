@@ -1,15 +1,7 @@
 <?php
 header('Content-Type: application/json');
-$allowedOrigin = 'https://ipt-2026-frontend-aballe.onrender.com';
-$origin = $_SERVER['HTTP_ORIGIN'] ?? '';
-if ($origin === $allowedOrigin || strpos($origin, 'localhost') !== false) {
-    header('Access-Control-Allow-Origin: ' . $origin);
-} else {
-    header('Access-Control-Allow-Origin: ' . $allowedOrigin);
-}
-header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
-header('Access-Control-Allow-Headers: Content-Type, Authorization');
-header('Access-Control-Allow-Credentials: true');
+// CORS headers are set by .htaccess (Apache mod_headers) to avoid duplication.
+// Setting them here too causes duplicate headers which browsers reject.
 
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') { http_response_code(200); exit(); }
 
