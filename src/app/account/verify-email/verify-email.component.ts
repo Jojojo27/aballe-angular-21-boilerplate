@@ -42,9 +42,8 @@ export class VerifyEmailComponent implements OnInit {
         .subscribe({
           next: () => {
             clearTimeout(slowTimer);
-            this.verified = true;
-            this.loading = false;
-            this.slowLoading = false;
+            this.alertService.success('Email verified! You can now log in.', { keepAfterRouteChange: true });
+            this.router.navigate(['/account/login']);
           },
           error: (error: any) => {
             clearTimeout(slowTimer);
