@@ -69,15 +69,20 @@ if ($method === 'POST' && strpos($uri, '/register') !== false) {
     $conn->query("INSERT INTO accounts (title,firstName,lastName,email,passwordHash,role,verificationToken,isVerified)
                   VALUES ('$t','$fn','$ln','$email','$hash','$role','$code',0)");
     $conn->close();
+    $verifyLink = 'https://ipt-2026-frontend-aballe.onrender.com/account/verify-email?email=' . urlencode($email) . '&token=' . $code;
     $emailSent = sendEmail(
         $email,
-        'Your Verification Code',
-        "<div style='font-family:Arial,sans-serif;max-width:480px;margin:auto'>
-          <h2 style='color:#0d6efd'>Email Verification</h2>
-          <p>Hi $fn, thanks for registering!</p>
-          <p>Your verification code is:</p>
-          <div style='font-size:36px;font-weight:bold;letter-spacing:8px;color:#0d6efd;margin:20px 0'>$code</div>
-          <p>Enter this code on the verification page to activate your account.</p>
+        'Verify Your Email — IPT 2026 Boilerplate',
+        "<div style='font-family:Arial,sans-serif;max-width:480px;margin:auto;padding:32px;background:#f9f9f9;border-radius:12px'>
+          <h2 style='color:#1a2f5e;margin-bottom:8px'>Email Verification</h2>
+          <p style='color:#333'>Hi $fn, thanks for registering!</p>
+          <p style='color:#333'>Click the button below to verify your email and activate your account:</p>
+          <div style='text-align:center;margin:24px 0'>
+            <a href='$verifyLink' style='background:#1a2f5e;color:#fff;text-decoration:none;padding:14px 32px;border-radius:8px;font-size:16px;font-weight:bold;display:inline-block'>Verify My Email</a>
+          </div>
+          <p style='color:#555;font-size:14px'>Or enter this 6-digit code manually on the verification page:</p>
+          <div style='font-size:36px;font-weight:bold;letter-spacing:8px;color:#1a2f5e;margin:12px 0;text-align:center'>$code</div>
+          <p style='color:#999;font-size:12px'>This code expires in 24 hours. If you did not register, ignore this email.</p>
         </div>"
     );
     if ($emailSent) {

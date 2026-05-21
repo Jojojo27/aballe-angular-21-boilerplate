@@ -25,10 +25,31 @@ export class VerifyEmailComponent implements OnInit {
 
   ngOnInit() {
     const email = this.route.snapshot.queryParams['email'] ?? '';
+    const token = this.route.snapshot.queryParams['token'] ?? '';
     this.form = this.formBuilder.group({
       email: [email, [Validators.required, Validators.email]],
-      code:  ['',    [Validators.required, Validators.minLength(6), Validators.maxLength(6), Validators.pattern('^[0-9]{6}$')]]
+      code:  [token, [Validators.required, Validators.minLength(6), Validators.maxLength(6), Validators.pattern('^[0-9]{6}$')]]
     });
+    // Auto-verify when both email and token are in the URL (e.g. clicked from email link)
+    if (email && token) {
+      this.loading = true;
+      this.accountService.verifyEmail(email, token)
+        .pipe(first())
+        .subscribe({
+          next: () => {
+            this.verified = true;
+            this.loading = false;
+            setTimeout(() => {
+              this.alertService.success('Email verified! You can now log in.', { keepAfterRouteChange: true });
+              this.router.navigate(['/account/login']);
+            }, 2000);
+          },
+          error: (error: any) => {
+            this.alertService.error(error);
+            this.loading = false;
+          }
+        });
+    }
   }
 
   get f() { return this.form.controls; }
