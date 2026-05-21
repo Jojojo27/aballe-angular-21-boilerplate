@@ -5,10 +5,19 @@
 
   <div *ngIf="loading" class="text-center py-4">
     <div class="spinner-border" role="status"></div>
-    <p class="mt-2 text-muted">Loading accounts... (server may be starting up)</p>
+    <p class="mt-2 text-muted">Loading accounts... (server may be starting up, please wait up to 60s)</p>
   </div>
 
-  <table class="table table-striped" *ngIf="!loading">
+  <div *ngIf="!loading && loadError" class="alert alert-danger d-flex align-items-center gap-3">
+    <span>{{ loadError }}</span>
+    <button class="btn btn-sm btn-outline-danger ms-auto" (click)="loadAccounts()">Retry</button>
+  </div>
+
+  <div *ngIf="!loading && !loadError && accounts?.length === 0" class="text-muted py-3">
+    No accounts found.
+  </div>
+
+  <table class="table table-striped" *ngIf="!loading && !loadError && accounts && accounts.length > 0">
     <thead>
       <tr>
         <th>First Name</th>
@@ -28,7 +37,7 @@
         <td><span class="badge" [ngClass]="account.isVerified ? 'bg-success' : 'bg-danger'">{{ account.isVerified ? 'Verified' : 'Not Verified' }}</span></td>
         <td>
           <a [routerLink]="['/admin/accounts/edit', account.id]" class="btn btn-sm btn-primary me-1">Edit</a>
-          <button (click)="deleteAccount(account.id)" class="btn btn-sm btn-danger" [disabled]="account.id === accountService.accountValue?.id">Delete</button>
+          <button (click)="deleteAccount(account.id)" class="btn btn-sm btn-danger" [disabled]="account.id == accountService.accountValue?.id">Delete</button>
         </td>
       </tr>
     </tbody>

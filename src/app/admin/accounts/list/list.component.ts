@@ -15,6 +15,7 @@ import { Account } from '@app/_models';
 export class ListComponent implements OnInit {
   accounts?: Account[];
   loading = true;
+  loadError = '';
 
   constructor(
     public accountService: AccountService,
@@ -22,15 +23,21 @@ export class ListComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    this.loadAccounts();
+  }
+
+  loadAccounts() {
+    this.loading = true;
+    this.loadError = '';
     this.accountService.getAll()
       .pipe(first())
       .subscribe({
         next: (accounts: any) => {
-          this.accounts = accounts;
+          this.accounts = accounts.map((a: any) => ({ ...a, isVerified: !!+a.isVerified }));
           this.loading = false;
         },
         error: (error: any) => {
-          this.alertService.error(error);
+          this.loadError = typeof error === 'string' ? error : 'Failed to load accounts.';
           this.loading = false;
         }
       });

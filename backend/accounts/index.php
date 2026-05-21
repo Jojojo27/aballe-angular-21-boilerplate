@@ -240,13 +240,17 @@ if ($method === 'GET') {
         $res = $conn->query("SELECT id,title,firstName,lastName,email,role,isVerified,created FROM accounts WHERE id=$rid");
         $acc = $res->fetch_assoc();
         if (!$acc) sendError('Account not found', 404);
+        $acc['isVerified'] = (bool)$acc['isVerified'];
         $conn->close();
         sendResponse($acc);
     }
     if ($auth['role'] !== 'Admin') sendError('Forbidden', 403);
     $res  = $conn->query("SELECT id,title,firstName,lastName,email,role,isVerified,created FROM accounts ORDER BY created DESC");
     $list = [];
-    while ($row = $res->fetch_assoc()) $list[] = $row;
+    while ($row = $res->fetch_assoc()) {
+        $row['isVerified'] = (bool)$row['isVerified'];
+        $list[] = $row;
+    }
     $conn->close();
     sendResponse($list);
 }
