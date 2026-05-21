@@ -26,8 +26,8 @@ export class AccountService {
     return this.http.post(`${baseUrl}/register`, account);
   }
 
-  verifyEmail(token: string) {
-    return this.http.post(`${baseUrl}/verify-email`, { token });
+  verifyEmail(email: string, token: string) {
+    return this.http.post(`${baseUrl}/verify-email`, { email, token });
   }
 
   login(email: string, password: string) {

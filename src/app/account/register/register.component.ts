@@ -50,8 +50,17 @@ export class RegisterComponent implements OnInit {
       .pipe(first())
       .subscribe({
         next: (response: any) => {
-          this.alertService.success('Registration successful, please check your email for verification instructions', { keepAfterRouteChange: true });
-          this.router.navigate(['/account/verify-email'], { queryParams: { token: response?.verificationToken } });
+          const email = this.form.value.email;
+          if (response?.verificationCode) {
+            // SMTP not configured — show code directly so user can verify
+            this.alertService.success(
+              `Registration successful. Your verification code is: <strong>${response.verificationCode}</strong>`,
+              { keepAfterRouteChange: true }
+            );
+          } else {
+            this.alertService.success('Registration successful! Check your email for the verification code.', { keepAfterRouteChange: true });
+          }
+          this.router.navigate(['/account/verify-email'], { queryParams: { email } });
         },
         error: (error: any) => {
           this.alertService.error(error);
