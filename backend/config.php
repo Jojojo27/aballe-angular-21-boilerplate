@@ -14,54 +14,37 @@ define('SMTP_PASS',      getenv('SMTP_PASS')       ?: '');
 define('SMTP_FROM_NAME', getenv('SMTP_FROM_NAME') ?: 'IPT Boilerplate');
 
 function sendEmail($to, $subject, $htmlBody) {
-    $host = SMTP_HOST;
-    $user = SMTP_USER;
-    $pass = str_replace(' ', '', SMTP_PASS);
-    if (!$user || !$pass) return 'no-credentials';
+    $apiKey = str_replace(' ', '', SMTP_PASS);
+    $fromEmail = SMTP_USER;
+    if (!$apiKey || !$fromEmail) return 'no-credentials';
 
-    // STARTTLS on port 587 (Brevo smtp-relay.brevo.com)
-    $socket = @fsockopen($host, 587, $errno, $errstr, 20);
-    if (!$socket) return "socket-failed:$errstr($errno)";
+    // Use Brevo Transactional Email REST API (HTTPS/443 — works on all hosts)
+    $payload = json_encode([
+        'sender'      => ['name' => SMTP_FROM_NAME, 'email' => $fromEmail],
+        'to'          => [['email' => $to]],
+        'subject'     => $subject,
+        'htmlContent' => $htmlBody,
+    ]);
 
-    stream_set_timeout($socket, 20);
-    fgets($socket, 512); // banner
+    $ch = curl_init('https://api.brevo.com/v3/smtp/email');
+    curl_setopt_array($ch, [
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_POST           => true,
+        CURLOPT_POSTFIELDS     => $payload,
+        CURLOPT_HTTPHEADER     => [
+            'Content-Type: application/json',
+            'Accept: application/json',
+            'api-key: ' . $apiKey,
+        ],
+        CURLOPT_TIMEOUT        => 20,
+    ]);
+    $response = curl_exec($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    $curlErr  = curl_error($ch);
+    curl_close($ch);
 
-    fwrite($socket, "EHLO localhost\r\n");
-    do { $line = fgets($socket, 512); } while ($line && isset($line[3]) && $line[3] !== ' ');
-
-    fwrite($socket, "STARTTLS\r\n");
-    $tlsResp = fgets($socket, 512);
-    if (strpos($tlsResp, '220') === false) { fclose($socket); return "starttls-failed:$tlsResp"; }
-
-    stream_socket_enable_crypto($socket, true, STREAM_CRYPTO_METHOD_TLS_CLIENT);
-
-    fwrite($socket, "EHLO localhost\r\n");
-    do { $line = fgets($socket, 512); } while ($line && isset($line[3]) && $line[3] !== ' ');
-
-    fwrite($socket, "AUTH LOGIN\r\n");
-    fgets($socket, 512);
-    fwrite($socket, base64_encode($user) . "\r\n");
-    fgets($socket, 512);
-    fwrite($socket, base64_encode($pass) . "\r\n");
-    $authResp = fgets($socket, 512);
-    if (strpos($authResp, '235') === false) { fclose($socket); return "auth-failed:$authResp"; }
-
-    fwrite($socket, "MAIL FROM:<$user>\r\n"); fgets($socket, 512);
-    fwrite($socket, "RCPT TO:<$to>\r\n");    fgets($socket, 512);
-    fwrite($socket, "DATA\r\n");             fgets($socket, 512);
-
-    $msg  = "From: " . SMTP_FROM_NAME . " <$user>\r\n";
-    $msg .= "To: $to\r\n";
-    $msg .= "Subject: $subject\r\n";
-    $msg .= "MIME-Version: 1.0\r\n";
-    $msg .= "Content-Type: text/html; charset=UTF-8\r\n\r\n";
-    $msg .= $htmlBody . "\r\n.\r\n";
-    fwrite($socket, $msg);
-    fgets($socket, 512);
-
-    fwrite($socket, "QUIT\r\n");
-    fclose($socket);
-    return true;
+    if ($httpCode >= 200 && $httpCode < 300) return true;
+    return "api-failed:$httpCode:$curlErr:$response";
 }
 
 function getDBConnection() {
