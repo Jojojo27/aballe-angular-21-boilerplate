@@ -1,0 +1,20 @@
+Options -Indexes
+Header always set Access-Control-Allow-Origin "*"
+Header always set Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS"
+Header always set Access-Control-Allow-Headers "Content-Type, Authorization"
+
+RewriteEngine On
+
+RewriteCond %{REQUEST_METHOD} OPTIONS
+RewriteRule ^(.*)$ $1 [R=200,L]
+
+RewriteRule ^accounts/authenticate$        accounts/index.php [L,QSA]
+RewriteRule ^accounts/register$            accounts/index.php [L,QSA]
+RewriteRule ^accounts/verify-email$        accounts/index.php [L,QSA]
+RewriteRule ^accounts/refresh-token$       accounts/index.php [L,QSA]
+RewriteRule ^accounts/revoke-token$        accounts/index.php [L,QSA]
+RewriteRule ^accounts/forgot-password$     accounts/index.php [L,QSA]
+RewriteRule ^accounts/validate-reset-token$ accounts/index.php [L,QSA]
+RewriteRule ^accounts/reset-password$      accounts/index.php [L,QSA]
+RewriteRule ^accounts/([0-9]+)$            accounts/index.php?id=$1 [L,QSA]
+RewriteRule ^accounts$                     accounts/index.php [L,QSA]
