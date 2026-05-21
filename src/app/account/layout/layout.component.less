@@ -1,1 +1,79 @@
-/* Account layout styles */
+.auth-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #a8d8f0 0%, #6ab0de 30%, #4a8fc0 60%, #7babd4 100%);
+  display: flex;
+  align-items: stretch;
+
+  .auth-left {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 4rem;
+    position: relative;
+
+    .auth-title {
+      color: #1a2f5e;
+      font-weight: 700;
+      font-size: 2.2rem;
+      line-height: 1.2;
+      margin-bottom: 1rem;
+    }
+
+    .auth-subtitle {
+      color: #1e3a6e;
+      font-size: 1.1rem;
+      line-height: 1.6;
+    }
+
+    .auth-sparkle {
+      position: absolute;
+      bottom: 3rem;
+      right: 2rem;
+      font-size: 2.5rem;
+      color: rgba(255, 255, 255, 0.8);
+      text-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+    }
+  }
+
+  .auth-right {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+
+    .glass-card {
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-radius: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+      padding: 2.5rem;
+      width: 100%;
+      max-width: 420px;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .auth-page {
+    flex-direction: column;
+
+    .auth-left {
+      padding: 2rem;
+      flex: none;
+
+      .auth-sparkle {
+        display: none;
+      }
+    }
+
+    .auth-right {
+      padding: 1rem 1rem 2rem;
+    }
+  }
+}

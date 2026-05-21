@@ -1,70 +1,64 @@
-<div class="col-md-6 offset-md-3 mt-5">
-  <div class="card">
-    <div class="card-body">
-      <h4 class="card-title">Register</h4>
+<h4 class="auth-heading">Register</h4>
 
-      <form [formGroup]="form" (ngSubmit)="onSubmit()">
-        <div class="mb-3">
-          <label class="form-label">Title</label>
-          <select formControlName="title" class="form-select">
-            <option value=""></option>
-            <option value="Mr">Mr</option>
-            <option value="Mrs">Mrs</option>
-            <option value="Miss">Miss</option>
-            <option value="Ms">Ms</option>
-          </select>
-          <div *ngIf="submitted && f['title'].errors" class="text-danger">Title is required</div>
-        </div>
-        <div class="mb-3">
-          <label class="form-label">First Name</label>
-          <input type="text" formControlName="firstName" class="form-control" />
-          <div *ngIf="submitted && f['firstName'].errors" class="text-danger">First Name is required</div>
-        </div>
-        <div class="mb-3">
-          <label class="form-label">Last Name</label>
-          <input type="text" formControlName="lastName" class="form-control" />
-          <div *ngIf="submitted && f['lastName'].errors" class="text-danger">Last Name is required</div>
-        </div>
-        <div class="mb-3">
-          <label class="form-label">Email</label>
-          <input type="text" formControlName="email" class="form-control" />
-          <div *ngIf="submitted && f['email'].errors" class="text-danger">
-            <div *ngIf="f['email'].errors['required']">Email is required</div>
-            <div *ngIf="f['email'].errors['email']">Email must be a valid email address</div>
-          </div>
-        </div>
-        <div class="mb-3">
-          <label class="form-label">Password</label>
-          <input type="password" formControlName="password" class="form-control" />
-          <div *ngIf="submitted && f['password'].errors" class="text-danger">
-            <div *ngIf="f['password'].errors['required']">Password is required</div>
-            <div *ngIf="f['password'].errors['minlength']">Password must be at least 6 characters</div>
-          </div>
-        </div>
-        <div class="mb-3">
-          <label class="form-label">Confirm Password</label>
-          <input type="password" formControlName="passwordConfirm" class="form-control" />
-          <div *ngIf="submitted && f['passwordConfirm'].errors" class="text-danger">
-            <div *ngIf="f['passwordConfirm'].errors['required']">Confirm Password is required</div>
-            <div *ngIf="f['passwordConfirm'].errors['mustMatch']">Passwords do not match</div>
-          </div>
-        </div>
-        <div class="mb-3">
-          <label class="form-check-label">
-            <input type="checkbox" formControlName="acceptTerms" class="form-check-input" />
-            I have read and agree to the Terms &amp; Conditions
-          </label>
-          <div *ngIf="submitted && f['acceptTerms'].errors" class="text-danger">Accept Ts &amp; Cs is required</div>
-        </div>
-        <button [disabled]="loading" class="btn btn-primary">
-          <span *ngIf="loading" class="spinner-border spinner-border-sm me-2"></span>
-          Register
-        </button>
-      </form>
-
-      <div class="text-center mt-3">
-        <p>Already have an account? <a routerLink="/account/login">Login</a></p>
-      </div>
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+  <div class="mb-3">
+    <label class="form-label auth-label">Title</label>
+    <select formControlName="title" class="form-select auth-input">
+      <option value=""></option>
+      <option value="Mr">Mr</option>
+      <option value="Mrs">Mrs</option>
+      <option value="Miss">Miss</option>
+      <option value="Ms">Ms</option>
+    </select>
+    <div *ngIf="submitted && f['title'].errors" class="text-danger small">Title is required</div>
+  </div>
+  <div class="mb-3">
+    <label class="form-label auth-label">First Name</label>
+    <input type="text" formControlName="firstName" class="form-control auth-input" />
+    <div *ngIf="submitted && f['firstName'].errors" class="text-danger small">First Name is required</div>
+  </div>
+  <div class="mb-3">
+    <label class="form-label auth-label">Last Name</label>
+    <input type="text" formControlName="lastName" class="form-control auth-input" />
+    <div *ngIf="submitted && f['lastName'].errors" class="text-danger small">Last Name is required</div>
+  </div>
+  <div class="mb-3">
+    <label class="form-label auth-label">Email</label>
+    <input type="text" formControlName="email" class="form-control auth-input" />
+    <div *ngIf="submitted && f['email'].errors" class="text-danger small">
+      <div *ngIf="f['email'].errors['required']">Email is required</div>
+      <div *ngIf="f['email'].errors['email']">Email must be a valid email address</div>
     </div>
   </div>
+  <div class="mb-3">
+    <label class="form-label auth-label">Password</label>
+    <input type="password" formControlName="password" class="form-control auth-input" />
+    <div *ngIf="submitted && f['password'].errors" class="text-danger small">
+      <div *ngIf="f['password'].errors['required']">Password is required</div>
+      <div *ngIf="f['password'].errors['minlength']">Password must be at least 6 characters</div>
+    </div>
+  </div>
+  <div class="mb-3">
+    <label class="form-label auth-label">Confirm Password</label>
+    <input type="password" formControlName="passwordConfirm" class="form-control auth-input" />
+    <div *ngIf="submitted && f['passwordConfirm'].errors" class="text-danger small">
+      <div *ngIf="f['passwordConfirm'].errors['required']">Confirm Password is required</div>
+      <div *ngIf="f['passwordConfirm'].errors['mustMatch']">Passwords do not match</div>
+    </div>
+  </div>
+  <div class="mb-3">
+    <label class="form-check-label auth-text">
+      <input type="checkbox" formControlName="acceptTerms" class="form-check-input me-2" />
+      I have read and agree to the Terms &amp; Conditions
+    </label>
+    <div *ngIf="submitted && f['acceptTerms'].errors" class="text-danger small">Accept Ts &amp; Cs is required</div>
+  </div>
+  <button [disabled]="loading" class="btn auth-btn-primary w-100">
+    <span *ngIf="loading" class="spinner-border spinner-border-sm me-2"></span>
+    Register
+  </button>
+</form>
+
+<div class="text-center mt-3">
+  <p class="auth-text-muted">Already have an account? <a routerLink="/account/login" class="auth-link">Login</a></p>
 </div>
