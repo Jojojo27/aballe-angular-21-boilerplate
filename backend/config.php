@@ -17,11 +17,11 @@ function sendEmail($to, $subject, $htmlBody) {
     $host = SMTP_HOST;
     $user = SMTP_USER;
     $pass = str_replace(' ', '', SMTP_PASS);
-    if (!$user || !$pass) return false;
+    if (!$user || !$pass) return 'no-credentials';
 
     // Use SSL/SMTPS on port 465 (more reliable than STARTTLS on cloud servers)
     $socket = @stream_socket_client("ssl://$host:465", $errno, $errstr, 20, STREAM_CLIENT_CONNECT, stream_context_create(['ssl' => ['verify_peer' => true, 'verify_peer_name' => true]]));
-    if (!$socket) return false;
+    if (!$socket) return "socket-failed:$errstr($errno)";
 
     stream_set_timeout($socket, 20);
     fgets($socket, 512); // banner
@@ -35,7 +35,7 @@ function sendEmail($to, $subject, $htmlBody) {
     fgets($socket, 512);
     fwrite($socket, base64_encode($pass) . "\r\n");
     $authResp = fgets($socket, 512);
-    if (strpos($authResp, '235') === false) { fclose($socket); return false; }
+    if (strpos($authResp, '235') === false) { fclose($socket); return "auth-failed:$authResp"; }
 
     fwrite($socket, "MAIL FROM:<$user>\r\n"); fgets($socket, 512);
     fwrite($socket, "RCPT TO:<$to>\r\n");    fgets($socket, 512);

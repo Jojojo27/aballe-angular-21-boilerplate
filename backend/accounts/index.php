@@ -87,12 +87,13 @@ if ($method === 'POST' && strpos($uri, '/register') !== false) {
         </table>
         </body></html>"
     );
-    if ($emailSent) {
+    if ($emailSent === true) {
         sendResponse(['message' => 'Registration successful. Check your email for the verification code.']);
     } else {
         sendResponse([
             'message' => 'Registration successful. (Email not configured — use the code below to verify.)',
-            'verificationCode' => $code
+            'verificationCode' => $code,
+            'emailError' => $emailSent
         ]);
     }
 }
