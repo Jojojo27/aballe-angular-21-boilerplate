@@ -9,7 +9,8 @@
 <div *ngIf="verified" class="text-center py-3">
   <div class="mb-3" style="font-size:3rem;color:rgba(255,255,255,0.9)">&#10003;</div>
   <h4 class="auth-heading" style="text-align:center">Email Verified!</h4>
-  <p class="auth-text-muted">Redirecting to login...</p>
+  <p class="auth-text-muted mb-4">Your email has been verified. You can now log in.</p>
+  <a routerLink="/account/login" class="btn auth-btn-primary w-100">Go to Login</a>
 </div>
 
 <!-- Manual code entry form (only when NOT coming from email link) -->

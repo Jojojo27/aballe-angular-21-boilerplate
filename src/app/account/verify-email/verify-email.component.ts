@@ -41,10 +41,6 @@ export class VerifyEmailComponent implements OnInit {
           next: () => {
             this.verified = true;
             this.loading = false;
-            setTimeout(() => {
-              this.alertService.success('Email verified! You can now log in.', { keepAfterRouteChange: true, id: 'account-alert' });
-              this.router.navigate(['/account/login']);
-            }, 2000);
           },
           error: (error: any) => {
             this.alertService.error(error, { id: 'account-alert' });
@@ -68,10 +64,6 @@ export class VerifyEmailComponent implements OnInit {
         next: () => {
           this.verified = true;
           this.loading = false;
-          setTimeout(() => {
-            this.alertService.success('Email verified! You can now log in.', { keepAfterRouteChange: true, id: 'account-alert' });
-            this.router.navigate(['/account/login']);
-          }, 2000);
         },
         error: (error: any) => {
           this.alertService.error(error, { id: 'account-alert' });
