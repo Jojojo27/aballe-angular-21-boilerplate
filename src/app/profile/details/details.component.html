@@ -1,6 +1,8 @@
-<h1>My Profile</h1>
-<p *ngIf="account">
-    <strong>Name: </strong> {{account.title}} {{account.firstName}} {{account.lastName}}<br />
-    <strong>Email: </strong> {{account.email}}
+<h4 class="auth-heading">My Profile</h4>
+<p *ngIf="account" class="auth-text mb-3">
+    <span class="auth-label d-block">Name</span>
+    {{account.title}} {{account.firstName}} {{account.lastName}}
+    <span class="auth-label d-block mt-2">Email</span>
+    {{account.email}}
 </p>
-<p><a routerLink="update">Update Profile</a></p>
+<a routerLink="update" class="btn auth-btn-primary">Update Profile</a>
