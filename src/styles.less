@@ -88,11 +88,55 @@ body {
     min-height: 320px;
 }
 
+/* ── Main app (logged-in) layout ── */
+.main-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #a8d8f0 0%, #6ab0de 30%, #4a8fc0 60%, #7babd4 100%);
+}
+
+.main-nav {
+  background: rgba(20, 40, 80, 0.45);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255,255,255,0.2);
+}
+
+.main-nav-brand {
+  color: rgba(255,255,255,0.95);
+  font-weight: 700;
+  font-size: 1.1rem;
+  letter-spacing: 0.03em;
+}
+
+.main-nav-link {
+  color: rgba(255,255,255,0.85) !important;
+  font-size: 0.95rem;
+
+  &:hover, &.active {
+    color: white !important;
+    font-weight: 500;
+  }
+}
+
+.main-content {
+  display: flex;
+  justify-content: center;
+  padding: 3rem 1.5rem;
+}
+
+.main-card {
+  max-width: 600px;
+  width: 100%;
+}
+
 .admin-nav {
     padding-top: 0;
     padding-bottom: 0;
-    background-color: #e8e9ea;
-    border-bottom: 1px solid #ccc;
+    background-color: rgba(255,255,255,0.15);
+    border-bottom: 1px solid rgba(255,255,255,0.25);
+
+    a, .nav-link { color: rgba(255,255,255,0.85) !important; }
+    a:hover, .nav-link:hover { color: white !important; }
 }
 
 .btn-delete-account {
@@ -215,13 +259,6 @@ body {
 .auth-text-muted {
   color: rgba(255, 255, 255, 0.65);
   font-size: 0.9rem;
-}
-
-.admin-nav {
-    padding-top: 0;
-    padding-bottom: 0;
-    background-color: #e8e9ea;
-    border-bottom: 1px solid #ccc;
 }
 
 .btn-delete-account {
