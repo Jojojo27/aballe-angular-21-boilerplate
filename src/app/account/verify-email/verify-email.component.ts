@@ -10,6 +10,7 @@ export class VerifyEmailComponent implements OnInit {
   loading = false;
   submitted = false;
   verified = false;
+  autoVerifying = false;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -32,6 +33,7 @@ export class VerifyEmailComponent implements OnInit {
     });
     // Auto-verify when both email and token are in the URL (e.g. clicked from email link)
     if (email && token) {
+      this.autoVerifying = true;
       this.loading = true;
       this.accountService.verifyEmail(email, token)
         .pipe(first())

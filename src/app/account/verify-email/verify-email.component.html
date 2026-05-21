@@ -1,3 +1,10 @@
+<!-- Auto-verifying state (came from email link) -->
+<div *ngIf="autoVerifying && !verified" class="text-center py-4">
+  <div class="spinner-border mb-3" style="color:rgba(255,255,255,0.8);width:3rem;height:3rem"></div>
+  <h4 class="auth-heading" style="text-align:center">Verifying your email...</h4>
+  <p class="auth-text-muted">Please wait a moment.</p>
+</div>
+
 <!-- Success state -->
 <div *ngIf="verified" class="text-center py-3">
   <div class="mb-3" style="font-size:3rem;color:rgba(255,255,255,0.9)">&#10003;</div>
@@ -5,8 +12,8 @@
   <p class="auth-text-muted">Redirecting to login...</p>
 </div>
 
-<!-- Code entry form -->
-<div *ngIf="!verified">
+<!-- Manual code entry form (only when NOT coming from email link) -->
+<div *ngIf="!autoVerifying && !verified">
   <h4 class="auth-heading">Verify Your Email</h4>
   <p class="auth-text-muted mb-3">Enter the 6-digit code sent to your email address.</p>
 
