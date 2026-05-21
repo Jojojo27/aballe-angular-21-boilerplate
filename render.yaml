@@ -1,7 +1,7 @@
 services:
   - type: web
     name: ipt-2026-frontend
-    runtime: static
+    env: static
     buildCommand: npm install && npm run build
     staticPublishPath: dist/ipt-2026-frontend
     routes:
