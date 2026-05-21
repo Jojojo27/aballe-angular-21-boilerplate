@@ -2,7 +2,8 @@
 <div *ngIf="autoVerifying && !verified" class="text-center py-4">
   <div class="spinner-border mb-3" style="color:rgba(255,255,255,0.8);width:3rem;height:3rem"></div>
   <h4 class="auth-heading" style="text-align:center">Verifying your email...</h4>
-  <p class="auth-text-muted">Please wait a moment.</p>
+  <p class="auth-text-muted" *ngIf="!slowLoading">Please wait a moment.</p>
+  <p class="auth-text-muted" *ngIf="slowLoading">The server is starting up — this can take up to 60 seconds on the free tier. Please hold on.</p>
 </div>
 
 <!-- Success state -->

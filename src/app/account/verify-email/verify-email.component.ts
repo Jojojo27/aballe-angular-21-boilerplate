@@ -11,6 +11,7 @@ export class VerifyEmailComponent implements OnInit {
   submitted = false;
   verified = false;
   autoVerifying = false;
+  slowLoading = false;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -35,16 +36,21 @@ export class VerifyEmailComponent implements OnInit {
     if (email && token) {
       this.autoVerifying = true;
       this.loading = true;
+      const slowTimer = setTimeout(() => { this.slowLoading = true; }, 5000);
       this.accountService.verifyEmail(email, token)
         .pipe(first())
         .subscribe({
           next: () => {
+            clearTimeout(slowTimer);
             this.verified = true;
             this.loading = false;
+            this.slowLoading = false;
           },
           error: (error: any) => {
+            clearTimeout(slowTimer);
             this.alertService.error(error, { id: 'account-alert' });
             this.loading = false;
+            this.slowLoading = false;
           }
         });
     }
