@@ -15,26 +15,16 @@ define('SMTP_FROM_NAME', getenv('SMTP_FROM_NAME') ?: 'IPT Boilerplate');
 
 function sendEmail($to, $subject, $htmlBody) {
     $host = SMTP_HOST;
-    $port = SMTP_PORT;
     $user = SMTP_USER;
     $pass = str_replace(' ', '', SMTP_PASS);
     if (!$user || !$pass) return false;
 
-    $socket = @stream_socket_client("tcp://$host:$port", $errno, $errstr, 15);
+    // Use SSL/SMTPS on port 465 (more reliable than STARTTLS on cloud servers)
+    $socket = @stream_socket_client("ssl://$host:465", $errno, $errstr, 20, STREAM_CLIENT_CONNECT, stream_context_create(['ssl' => ['verify_peer' => true, 'verify_peer_name' => true]]));
     if (!$socket) return false;
 
-    stream_set_timeout($socket, 15);
-    fgets($socket, 512);
-
-    fwrite($socket, "EHLO localhost\r\n");
-    do { $line = fgets($socket, 512); } while ($line && isset($line[3]) && $line[3] !== ' ');
-
-    fwrite($socket, "STARTTLS\r\n");
-    fgets($socket, 512);
-
-    if (!stream_socket_enable_crypto($socket, true, STREAM_CRYPTO_METHOD_TLS_CLIENT)) {
-        fclose($socket); return false;
-    }
+    stream_set_timeout($socket, 20);
+    fgets($socket, 512); // banner
 
     fwrite($socket, "EHLO localhost\r\n");
     do { $line = fgets($socket, 512); } while ($line && isset($line[3]) && $line[3] !== ' ');
