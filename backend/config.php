@@ -7,15 +7,16 @@ define('DB_NAME',     getenv('DB_NAME')     ?: 'ipt_db');
 define('DB_PORT',     (int)(getenv('DB_PORT') ?: 3306));
 define('JWT_SECRET',  getenv('JWT_SECRET')  ?: 'change-me-in-production');
 
-define('SMTP_HOST',      getenv('SMTP_HOST')      ?: 'smtp.gmail.com');
+define('SMTP_HOST',      getenv('SMTP_HOST')       ?: 'smtp.gmail.com');
 define('SMTP_PORT',      (int)(getenv('SMTP_PORT') ?: 587));
-define('SMTP_USER',      getenv('SMTP_USER')      ?: '');
-define('SMTP_PASS',      getenv('SMTP_PASS')       ?: '');
-define('SMTP_FROM_NAME', getenv('SMTP_FROM_NAME') ?: 'IPT Boilerplate');
+define('SMTP_USER',      getenv('SMTP_USER')       ?: '');
+define('SMTP_PASS',      getenv('SMTP_PASS')        ?: '');
+define('SMTP_FROM_EMAIL', getenv('SMTP_FROM_EMAIL') ?: SMTP_USER);
+define('SMTP_FROM_NAME', getenv('SMTP_FROM_NAME')  ?: 'IPT Boilerplate');
 
 function sendEmail($to, $subject, $htmlBody) {
-    $apiKey = str_replace(' ', '', SMTP_PASS);
-    $fromEmail = SMTP_USER;
+    $apiKey    = str_replace(' ', '', SMTP_PASS);
+    $fromEmail = SMTP_FROM_EMAIL;
     if (!$apiKey || !$fromEmail) return 'no-credentials';
 
     // Use Brevo Transactional Email REST API (HTTPS/443 — works on all hosts)
