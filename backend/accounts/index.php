@@ -12,6 +12,11 @@ $uri    = $_SERVER['REQUEST_URI'];
 $body   = json_decode(file_get_contents('php://input'), true) ?? [];
 $id     = $_GET['id'] ?? null;
 
+// GET /accounts/ping — keep-alive endpoint to prevent cold starts
+if ($method === 'GET' && strpos($uri, '/ping') !== false) {
+    sendResponse(['status' => 'ok']);
+}
+
 // POST /api/accounts/authenticate
 if ($method === 'POST' && strpos($uri, '/authenticate') !== false) {
     $conn  = getDBConnection();
