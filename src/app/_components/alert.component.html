@@ -1,6 +1,6 @@
 <div class="space-y-3 mt-3 mb-3">
   <div *ngFor="let alert of alerts" [ngClass]="'alert alert-' + alert.type + ' alert-dismissible fade show'" role="alert">
-    {{ alert.message }}
+    <span [innerHTML]="alert.message"></span>
     <button (click)="removeAlert(alert)" type="button" class="btn-close" aria-label="Close"></button>
   </div>
 </div>

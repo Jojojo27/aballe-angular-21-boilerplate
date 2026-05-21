@@ -49,11 +49,10 @@ export class LoginComponent implements OnInit {
       .pipe(first())
       .subscribe({
         next: () => {
-          this.alertService.success('Login successful', { keepAfterRouteChange: true });
           this.router.navigate([this.returnUrl || '/']);
         },
         error: (error: any) => {
-          this.alertService.error(error);
+          this.alertService.error(error, { id: 'account-alert' });
           this.loading = false;
         }
       });
