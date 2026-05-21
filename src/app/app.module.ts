@@ -8,18 +8,18 @@ import { AppRoutingModule } from './app-routing.module';
 import { JwtInterceptor, ErrorInterceptor, FakeBackendInterceptor, appInitializer } from './_helpers';
 import { AccountService } from './_services';
 import { AppComponent } from './app.component';
-import { AlertComponent } from './_components';
 import { HomeComponent } from './home';
+import { SharedModule } from './_shared/shared.module';
 
 @NgModule({
     imports: [
         BrowserModule,
         ReactiveFormsModule,
-        AppRoutingModule
+        AppRoutingModule,
+        SharedModule
     ],
     declarations: [
         AppComponent,
-        AlertComponent,
         HomeComponent
     ],
     providers: [
