@@ -1,230 +1,196 @@
-# Angular 21 Auth Boilerplate (Beginner Guide)
+# Angular 21 Auth Boilerplate — Joan Aballe
 
-This project is a beginner-friendly Angular 21 boilerplate that demonstrates a complete authentication flow:
+A complete Angular 21 authentication boilerplate with glassmorphism UI, email verification, JWT + refresh-token cookie auth, role-based access control (Admin / User), and a PHP + MySQL backend.
 
-- Email sign up + email verification
+## Live Deployments
+
+| Service | URL |
+|---------|-----|
+| **Frontend** (Angular SPA) | https://ipt-2026-frontend-aballe.onrender.com |
+| **Backend** (PHP REST API) | https://ipt-2026-backend-aballe.onrender.com |
+| **API Docs** (Swagger UI) | https://ipt-2026-backend-aballe.onrender.com/api-docs |
+
+## Repositories
+
+| Repo | URL |
+|------|-----|
+| **Frontend** (this repo) | https://github.com/Jojojo27/aballe-angular-21-boilerplate |
+| **Backend** | https://github.com/Jojojo27/aballe-angular-21-boilerplate (inside `/backend` folder) |
+
+## Features
+
+- Email sign up + 6-digit email verification code
 - Login + logout
-- JWT auth header for API requests
-- Refresh tokens (cookie-based) + auto-refresh before access token expiry
+- JWT (`jwtToken`) in memory / localStorage — confirmed via browser Application tab
+- Refresh token (`refreshToken`) stored as **HttpOnly cookie** — confirmed via browser Application tab
+- Auto token-refresh before JWT expiry
 - Forgot password + reset password
 - Role-based authorization (User & Admin)
-- Admin area for account management
-- Profile area for viewing/updating your own account
+- Admin panel for account management
+- Profile area for updating your own account
+- Built-in **fake backend** (Stage A demo — no API needed)
+- Glassmorphism UI design with Poppins font
 
 ## Table of contents
 
-- [1) Prerequisites](#1-prerequisites)
-- [2) Run the app (real API)](#2-run-the-app-real-api)
-- [3) Run the app (fake backend, no API)](#3-run-the-app-fake-backend-no-api)
-- [4) Using the app (what to click)](#4-using-the-app-what-to-click)
-- [5) How authentication works](#5-how-authentication-works)
-- [6) Authorization (roles + route guards)](#6-authorization-roles--route-guards)
-- [7) Project structure (quick tour)](#7-project-structure-quick-tour)
-- [8) Troubleshooting](#8-troubleshooting)
+- [Prerequisites](#prerequisites)
+- [Stage A — Run with Fake Backend (no API)](#stage-a--run-with-fake-backend-no-api)
+- [Stage B — Run with Real API](#stage-b--run-with-real-api)
+- [Environment Variables (Backend)](#environment-variables-backend)
+- [Authentication Flow](#authentication-flow)
+- [RBAC — Roles](#rbac--roles)
+- [Project Structure](#project-structure)
 
-## 1) Prerequisites
+## Prerequisites
 
-- Node.js (LTS recommended)
+- Node.js 20+ (LTS)
 - npm (comes with Node.js)
-- (Optional) Angular CLI:
-  - `npm i -g @angular/cli`
+- Angular CLI (optional): `npm i -g @angular/cli`
 
-## 2) Run the app (real API)
+---
 
-By default this project is set up to call a real API at:
+## Stage A — Run with Fake Backend (no API)
 
-- `http://localhost:4000` (see `src/environments/environment.ts`)
+Use the built-in fake backend to demo all Angular logic without any external service.
 
-### Step 1: install packages
+### 1. Enable the fake backend
 
-From the project root (where `package.json` is):
-
-```bash
-npm install
-```
-
-### Step 2: start your backend API
-
-Start an API that implements the `/accounts/*` endpoints described in the [How authentication works](#5-how-authentication-works) section.
-
-The frontend expects the API to be available at `http://localhost:4000` by default.
-
-### Step 3: start Angular
-
-```bash
-npm start
-```
-
-This runs `ng serve --open` and should open the app in your browser.
-
-### Step 4: update API URL (if your API runs elsewhere)
-
-Edit the environment file:
-
-- `src/environments/environment.ts` (development)
-- `src/environments/environment.prod.ts` (production build)
-
-Update:
+Open `src/app/app.module.ts` and **uncomment** the `FakeBackendInterceptor` provider:
 
 ```ts
-apiUrl: 'http://localhost:4000'
+// STAGE A: Uncomment the line below
+{ provide: HTTP_INTERCEPTORS, useClass: FakeBackendInterceptor, multi: true }
 ```
 
-## 3) Run the app (fake backend, no API)
-
-If you want to run everything fully in the browser (no backend), you can enable the built-in fake backend interceptor.
-
-### Step 1: enable the fake backend provider
-
-Open `src/app/app.module.ts` and uncomment the `fakeBackendProvider` line in the `providers` array.
-
-It should look like this:
-
-```ts
-providers: [
-        { provide: APP_INITIALIZER, useFactory: appInitializer, multi: true, deps: [AccountService] },
-        { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
-        { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
-
-        // provider used to create fake backend
-        fakeBackendProvider
-    ],
-```
-
-### Step 2: run the app
+### 2. Install and run
 
 ```bash
 npm install
 npm start
 ```
 
-### How the fake backend behaves (important for beginners)
+The app opens at `http://localhost:4200`.
 
-- Accounts are stored in your browser `localStorage`, not in a database.
-- "Emails" (verification + reset password links) are displayed in the UI as alerts because a browser-only app can't send real emails.
-- The first registered account becomes `Admin`, and all other accounts become `User`.
+### 3. What the fake backend does
 
-If you want a clean slate while using the fake backend, clear site data in your browser or remove the local storage key:
+| Feature | Behavior |
+|---------|----------|
+| Accounts | Stored in browser `localStorage` |
+| Verification code | Shown in the green alert after registration — enter it on the Verify Email page |
+| First registered account | Gets `Admin` role automatically |
+| All subsequent accounts | Get `User` role |
+| Emails | Not sent — code is displayed in UI |
 
-- `angular-15-signup-verification-boilerplate-accounts`
+> **To reset:** open DevTools → Application → Local Storage → delete the `accounts` key.
 
-## 4) Using the app (what to click)
+---
 
-This section assumes you are starting fresh and want to see the full flow.
+## Stage B — Run with Real API
 
-### A) Create an account
+### 1. Comment out the fake backend
 
-1. Go to Register
-2. Fill in your details and submit
-3. If you are using the fake backend, a "verification email" will appear as an alert with a link
-4. Click the verification link (or paste it in the browser) to verify your account
+In `src/app/app.module.ts`, **comment out** the `FakeBackendInterceptor` line again.
 
-### B) Login
+### 2. Point to local backend (XAMPP)
 
-1. Go to Login
-2. Enter your email + password
-3. On success you'll be redirected to the home page
+`src/environments/environment.ts` already uses `/api` (proxied via `proxy.conf.json` to `http://localhost`).  
+Start XAMPP, place the `/backend` folder at `C:/xampp/htdocs/api/`, and run:
 
-### C) Forgot Password
+```bash
+npm start
+```
 
-1. Go to Forgot Password
-2. Enter your email and submit
-3. If you are using the fake backend, a "reset password email" will appear as an alert with a link
-4. Click the reset link and set a new password
+### 3. Point to production backend (Render)
 
-### D) Profile and Admin areas
+`src/environments/environment.prod.ts` is already set to:
 
-- Profile pages allow you to view and update your own account details.
-- The Admin area is restricted to accounts with the `Admin` role.
+```ts
+apiUrl: 'https://ipt-2026-backend-aballe.onrender.com'
+```
 
-## 5) How authentication works
+Build for production:
 
-This boilerplate uses two tokens:
+```bash
+npm run build
+```
 
-- Access token (JWT): short-lived token used in the `Authorization: Bearer <token>` header
-- Refresh token: long-lived token stored in a cookie and sent with `withCredentials: true`
+---
 
-### The important pieces
+## Environment Variables (Backend)
 
-- API base URL:
-  - `src/environments/environment.ts`
-- Account service (login/logout/refresh/register/etc.):
-  - `src/app/_services/account.service.ts`
-- App initializer (tries to refresh on first app load):
-  - `src/app/_helpers/app.initializer.ts`
-- JWT interceptor (adds the `Authorization` header for API calls):
-  - `src/app/_helpers/jwt.interceptor.ts`
-- Error interceptor (auto-logout on 401/403):
-  - `src/app/_helpers/error.interceptor.ts`
+Set these in the Render dashboard for the backend service:
 
-### Flow: login
+| Variable | Example |
+|----------|---------|
+| `DB_HOST` | `kodama.proxy.rlwy.net` |
+| `DB_PORT` | `52187` |
+| `DB_USER` | `root` |
+| `DB_PASS` | `<railway password>` |
+| `DB_NAME` | `railway` |
+| `JWT_SECRET` | `<random secret>` |
+| `SMTP_HOST` | `sandbox.smtp.mailtrap.io` |
+| `SMTP_PORT` | `587` |
+| `SMTP_USER` | `<mailtrap username>` |
+| `SMTP_PASS` | `<mailtrap password>` |
 
-1. Login component calls `AccountService.login(email, password)`
-2. The API returns an `Account` object that includes `jwtToken`
-3. The app stores the account in memory (a `BehaviorSubject`) and starts a refresh timer
-4. For future API requests, the JWT interceptor attaches `Authorization: Bearer ...`
+No secrets are hardcoded in source code — all sensitive values are read from environment variables at runtime.
 
-### Flow: refresh token (important)
+---
 
-1. The refresh token is sent to the API using cookies (`withCredentials: true`)
-2. The API responds with a new access token (`jwtToken`)
-3. The app schedules an automatic refresh about 1 minute before the access token expires
-4. When you reload the page, `APP_INITIALIZER` calls refresh immediately to restore the session (if the cookie is still valid)
+## Authentication Flow
 
-## 6) Authorization (roles + route guards)
+```
+Register → 6-digit code emailed → Verify Email → Login
+         ↓
+    jwtToken (in memory/localStorage)   ← inspect in Application → Local Storage
+    refreshToken (HttpOnly cookie)      ← inspect in Application → Cookies
+         ↓
+    Auto-refresh before JWT expiry
+         ↓
+    Logout → cookie cleared
+```
 
-- The `AuthGuard` protects routes that require login.
-- Pass `data: { roles: [Role.Admin] }` to restrict a route to admins only.
-- The `account.role` field on the `Account` model holds the user's role.
+**SPA Routing Fix:** `render.yaml` includes a rewrite rule `/* → /index.html` so deep links (e.g. `/account/verify-email`) work correctly.
 
-## 7) Project structure (quick tour)
+---
+
+## RBAC — Roles
+
+| Role | Access |
+|------|--------|
+| **Admin** | Home, Profile, **Admin panel** (manage all accounts) |
+| **User** | Home, Profile only — redirected away from Admin |
+
+The first account registered is always `Admin`. All subsequent accounts are `User`.
+
+---
+
+## Project Structure
 
 ```
 src/
 ├── app/
-│   ├── _components/        # Shared components (e.g. alert)
-│   ├── _helpers/           # Guards, interceptors, initializer, validators
-│   ├── _models/            # TypeScript interfaces/models
-│   ├── _services/          # Angular services (account, alert)
-│   ├── account/            # Login, register, forgot/reset password, verify email
-│   ├── admin/              # Admin layout + account management
-│   ├── home/               # Home page (authenticated)
-│   ├── profile/            # Profile view + update
-│   ├── app-routing.module.ts
-│   ├── app.component.ts
-│   └── app.module.ts
+│   ├── _components/        # Shared UI components (Alert)
+│   ├── _helpers/           # Guards, interceptors, fake-backend, validators
+│   ├── _models/            # TypeScript models (Account, Role, Alert)
+│   ├── _services/          # AccountService, AlertService
+│   ├── account/            # Login, Register, Forgot/Reset Password, Verify Email
+│   ├── admin/              # Admin layout + account management panel
+│   ├── home/               # Home page (authenticated users)
+│   ├── profile/            # Profile view and update
+│   ├── app.module.ts       # Root module — enable/disable fake backend here
+│   └── app-routing.module.ts
 ├── environments/
-│   ├── environment.ts
-│   └── environment.prod.ts
-├── index.html
-├── main.ts
-├── polyfills.ts
-└── styles.less
+│   ├── environment.ts          # Local dev (proxy to XAMPP)
+│   └── environment.prod.ts     # Production (Render backend URL)
+└── styles.less                 # Global styles (glassmorphism, auth layout)
+
+backend/
+├── accounts/index.php      # All /accounts/* REST endpoints
+├── api-docs/index.php      # Swagger UI documentation page
+├── config.php              # DB connection, JWT helpers, SMTP sendEmail()
+├── init.sql                # Database schema
+├── .htaccess               # CORS headers + URL rewrite rules
+└── Dockerfile              # PHP 8.2 Apache container for Render
 ```
-
-## 8) Troubleshooting
-
-- **Blank page / no redirect after login**: make sure the API is running and returning a valid `jwtToken`.
-- **401 errors on every request**: the refresh token cookie may have expired — log out and log back in.
-- **Fake backend not working**: ensure `fakeBackendProvider` is uncommented in `app.module.ts` and you have restarted the app.
-- **CORS errors**: your backend API must allow requests from `http://localhost:4200` and support credentials.
-
-### I'm calling an API on another port and cookies aren't being sent
-
-This frontend uses `withCredentials: true` for login/refresh/revoke, but the backend must also:
-
-- Enable CORS with credentials
-- Return `Access-Control-Allow-Credentials: true`
-- Allow the frontend origin in `Access-Control-Allow-Origin` (it cannot be `*` when using credentials)
-
-### I want to reset the fake backend data
-
-- Clear browser storage for the site, or remove the local storage key:
-  - `angular-15-signup-verification-boilerplate-accounts`
-
-### Run unit tests
-
-```bash
-npm test
-```
-
+

@@ -5,7 +5,7 @@ import { provideHttpClient, withInterceptorsFromDi, HTTP_INTERCEPTORS } from '@a
 import { provideAppInitializer, inject } from '@angular/core';
 
 import { AppRoutingModule } from './app-routing.module';
-import { JwtInterceptor, ErrorInterceptor, appInitializer } from './_helpers';
+import { JwtInterceptor, ErrorInterceptor, FakeBackendInterceptor, appInitializer } from './_helpers';
 import { AccountService } from './_services';
 import { AppComponent } from './app.component';
 import { AlertComponent } from './_components';
@@ -26,7 +26,10 @@ import { HomeComponent } from './home';
         provideHttpClient(withInterceptorsFromDi()),
         provideAppInitializer(() => appInitializer(inject(AccountService))()),
         { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
-        { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true }
+        { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
+        // ─── STAGE A: Uncomment the line below to use the Fake Backend (no real API needed) ───
+        // ─── STAGE B: Keep it commented out to use the real deployed API ───────────────────────
+        // { provide: HTTP_INTERCEPTORS, useClass: FakeBackendInterceptor, multi: true }
     ],
     bootstrap: [AppComponent]
 })

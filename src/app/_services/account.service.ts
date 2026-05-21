@@ -31,7 +31,7 @@ export class AccountService {
   }
 
   login(email: string, password: string) {
-    return this.http.post<any>(`${baseUrl}/authenticate`, { email, password })
+    return this.http.post<any>(`${baseUrl}/authenticate`, { email, password }, { withCredentials: true })
       .pipe(map((response: any) => {
         this.setAccount(response);
         return response;
@@ -39,12 +39,12 @@ export class AccountService {
   }
 
   logout() {
-    this.http.post(`${baseUrl}/revoke-token`, {}).subscribe();
+    this.http.post(`${baseUrl}/revoke-token`, {}, { withCredentials: true }).subscribe();
     this.setAccount(null);
   }
 
   refreshToken() {
-    return this.http.post<any>(`${baseUrl}/refresh-token`, {})
+    return this.http.post<any>(`${baseUrl}/refresh-token`, {}, { withCredentials: true })
       .pipe(map((response: any) => {
         this.setAccount(response);
         return response;

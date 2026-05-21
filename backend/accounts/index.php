@@ -1,8 +1,15 @@
 <?php
 header('Content-Type: application/json');
-header('Access-Control-Allow-Origin: *');
+$allowedOrigin = 'https://ipt-2026-frontend-aballe.onrender.com';
+$origin = $_SERVER['HTTP_ORIGIN'] ?? '';
+if ($origin === $allowedOrigin || strpos($origin, 'localhost') !== false) {
+    header('Access-Control-Allow-Origin: ' . $origin);
+} else {
+    header('Access-Control-Allow-Origin: ' . $allowedOrigin);
+}
 header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type, Authorization');
+header('Access-Control-Allow-Credentials: true');
 
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') { http_response_code(200); exit(); }
 
@@ -25,11 +32,21 @@ if ($method === 'POST' && strpos($uri, '/authenticate') !== false) {
     $refreshToken = generateToken();
     $conn->query("UPDATE accounts SET jwtToken='$refreshToken' WHERE id=" . (int)$acc['id']);
     $conn->close();
+    // Set refresh token as HttpOnly cookie
+    $proto    = $_SERVER['HTTP_X_FORWARDED_PROTO'] ?? (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http');
+    $isSecure = $proto === 'https';
+    setcookie('refreshToken', $refreshToken, [
+        'expires'  => time() + 7 * 86400,
+        'path'     => '/',
+        'httponly' => true,
+        'secure'   => $isSecure,
+        'samesite' => $isSecure ? 'None' : 'Lax'
+    ]);
     sendResponse([
         'id' => $acc['id'], 'title' => $acc['title'],
         'firstName' => $acc['firstName'], 'lastName' => $acc['lastName'],
         'email' => $acc['email'], 'role' => $acc['role'],
-        'accessToken' => $accessToken, 'refreshToken' => $refreshToken
+        'jwtToken' => $accessToken
     ]);
 }
 
@@ -127,7 +144,8 @@ if ($method === 'POST' && strpos($uri, '/reset-password') !== false) {
 
 // POST /api/accounts/refresh-token
 if ($method === 'POST' && strpos($uri, '/refresh-token') !== false) {
-    $token = $body['token'] ?? '';
+    // Accept token from cookie (production) or body (dev fallback)
+    $token = $_COOKIE['refreshToken'] ?? ($body['token'] ?? '');
     if (!$token) sendError('Refresh token is required', 401);
     $conn = getDBConnection();
     $t    = $conn->real_escape_string($token);
@@ -138,20 +156,37 @@ if ($method === 'POST' && strpos($uri, '/refresh-token') !== false) {
     $newRefresh = generateToken();
     $conn->query("UPDATE accounts SET jwtToken='$newRefresh' WHERE id=" . (int)$acc['id']);
     $conn->close();
+    $proto    = $_SERVER['HTTP_X_FORWARDED_PROTO'] ?? (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http');
+    $isSecure = $proto === 'https';
+    setcookie('refreshToken', $newRefresh, [
+        'expires'  => time() + 7 * 86400,
+        'path'     => '/',
+        'httponly' => true,
+        'secure'   => $isSecure,
+        'samesite' => $isSecure ? 'None' : 'Lax'
+    ]);
     sendResponse([
         'id' => $acc['id'], 'title' => $acc['title'],
         'firstName' => $acc['firstName'], 'lastName' => $acc['lastName'],
         'email' => $acc['email'], 'role' => $acc['role'],
-        'accessToken' => $newAccess, 'refreshToken' => $newRefresh
+        'jwtToken' => $newAccess
     ]);
 }
 
 // POST /api/accounts/revoke-token
 if ($method === 'POST' && strpos($uri, '/revoke-token') !== false) {
     $conn  = getDBConnection();
-    $token = $conn->real_escape_string($body['token'] ?? '');
-    if ($token) $conn->query("UPDATE accounts SET jwtToken=NULL WHERE jwtToken='$token'");
+    $token = $_COOKIE['refreshToken'] ?? ($conn->real_escape_string($body['token'] ?? ''));
+    if ($token) $conn->query("UPDATE accounts SET jwtToken=NULL WHERE jwtToken='" . $conn->real_escape_string($token) . "'");
     $conn->close();
+    // Clear the cookie
+    setcookie('refreshToken', '', [
+        'expires'  => time() - 3600,
+        'path'     => '/',
+        'httponly' => true,
+        'secure'   => true,
+        'samesite' => 'None'
+    ]);
     sendResponse(['message' => 'Token revoked']);
 }
 

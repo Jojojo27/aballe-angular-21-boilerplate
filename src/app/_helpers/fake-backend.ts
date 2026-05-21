@@ -31,29 +31,26 @@ export class FakeBackendInterceptor implements HttpInterceptor {
             if (accounts.find((x: any) => x.email === body.email)) {
               return error('Email "' + body.email + '" is already registered');
             }
-            const verificationToken = Math.random().toString(36).substr(2, 9);
+            const verificationCode = (Math.floor(100000 + Math.random() * 900000)).toString();
             const account = { 
               ...body, 
               id: Math.random().toString(36).substr(2, 9), 
               role: accounts.length === 0 ? Role.Admin : Role.User,
               isVerified: false,
-              verificationToken
+              verificationToken: verificationCode
             };
-            verifyEmailTokens[verificationToken] = account.id;
             accounts.push(account);
             localStorage.setItem('accounts', JSON.stringify(accounts));
-            return ok({ verificationToken });
+            return ok({ verificationCode });
           }
 
           if (url.endsWith('/api/accounts/verify-email') && method === 'POST') {
-            const accountId = verifyEmailTokens[body.token];
-            if (!accountId) return error('Token is invalid');
-            const account = accounts.find(x => x.id === accountId);
-            if (!account) return error('Account not found');
+            const account = accounts.find((x: any) => x.email === body.email && x.verificationToken === body.token && !x.isVerified);
+            if (!account) return error('Invalid or expired verification code');
             account.isVerified = true;
-            delete account.verifyEmailToken;
+            account.verificationToken = null;
             localStorage.setItem('accounts', JSON.stringify(accounts));
-            return ok();
+            return ok({ message: 'Email verified successfully' });
           }
 
           if (url.endsWith('/api/accounts/forgot-password') && method === 'POST') {

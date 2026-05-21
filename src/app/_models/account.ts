@@ -15,4 +15,5 @@ export class Account {
   acceptTerms?: boolean;
   accessToken?: string;
   refreshToken?: string;
+  jwtToken?: string;
 }

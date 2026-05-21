@@ -1,13 +1,15 @@
 Options -Indexes
-Header always set Access-Control-Allow-Origin "*"
+Header always set Access-Control-Allow-Origin "https://ipt-2026-frontend-aballe.onrender.com"
 Header always set Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS"
 Header always set Access-Control-Allow-Headers "Content-Type, Authorization"
+Header always set Access-Control-Allow-Credentials "true"
 
 RewriteEngine On
 
 RewriteCond %{REQUEST_METHOD} OPTIONS
 RewriteRule ^(.*)$ $1 [R=200,L]
 
+RewriteRule ^api-docs$                     api-docs/index.php [L]
 RewriteRule ^accounts/authenticate$        accounts/index.php [L,QSA]
 RewriteRule ^accounts/register$            accounts/index.php [L,QSA]
 RewriteRule ^accounts/verify-email$        accounts/index.php [L,QSA]

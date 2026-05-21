@@ -9,13 +9,14 @@ export class JwtInterceptor implements HttpInterceptor {
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     const account = this.accountService.accountValue;
-    const isLoggedIn = account?.accessToken;
+    const token = account?.jwtToken || account?.accessToken;
+    const isLoggedIn = !!token;
     const isApiUrl = request.url.startsWith('/api');
 
     if (isLoggedIn && isApiUrl) {
       request = request.clone({
         setHeaders: {
-          Authorization: `Bearer ${account.accessToken}`
+          Authorization: `Bearer ${token}`
         }
       });
     }
